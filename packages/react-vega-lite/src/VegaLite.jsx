@@ -1,6 +1,6 @@
-import React from 'react';
-import * as vl from 'vega-lite';
-import Vega from 'react-vega';
+import React from "react";
+import * as vl from "vega-lite";
+import Vega from "../../react-vega/src";
 
 const VegaLite = props => {
   const parsedProps = { ...props };
@@ -10,7 +10,11 @@ const VegaLite = props => {
     combinedSpec.data = data;
     delete parsedProps.data;
   }
-  parsedProps.spec = vl.compile(combinedSpec).spec;
+  try {
+    parsedProps.spec = vl.compile(combinedSpec).spec;
+  } catch (ex) {
+    console.log("编译错误：", ex);
+  }
 
   return <Vega {...parsedProps} />;
 };
