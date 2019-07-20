@@ -1,10 +1,11 @@
 import React from "react";
 import * as vl from "vega-lite";
-import Vega from "../../react-vega/src/VegaEmbed";
+import VegaEmbed from "../../react-vega/src/VegaEmbed";
+import Vega from "../../react-vega/src/Vega";
 
 const VegaLite = props => {
   const parsedProps = { ...props };
-  const { spec, data } = props;
+  const { spec, data, rnd } = props;
   const combinedSpec = { ...spec };
   if (data) {
     combinedSpec.data = data;
@@ -16,7 +17,7 @@ const VegaLite = props => {
     console.log("编译错误：", ex);
   }
 
-  return <Vega {...parsedProps} />;
+  return rnd ? <Vega {...parsedProps} /> : <VegaEmbed {...parsedProps} />;
 };
 
 VegaLite.propTypes = Vega.propTypes;
