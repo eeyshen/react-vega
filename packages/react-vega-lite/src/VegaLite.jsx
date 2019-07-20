@@ -1,6 +1,6 @@
 import React from "react";
 import * as vl from "vega-lite";
-import Vega from "../../react-vega/src";
+import Vega from "../../react-vega/src/VegaEmbed";
 
 const VegaLite = props => {
   const parsedProps = { ...props };

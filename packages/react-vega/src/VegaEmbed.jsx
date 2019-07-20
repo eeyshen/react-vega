@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/forbid-prop-types */
-import * as vega from 'vega';
+import * as vega from "vega";
 
-import PropTypes from 'prop-types';
-import React from 'react';
-import { capitalize, isDefined, isFunction } from './util';
+import PropTypes from "prop-types";
+import React from "react";
+import vegaEmbed from "vega-embed";
+import { capitalize, isDefined, isFunction } from "./util";
 
 const propTypes = {
   background: PropTypes.string,
@@ -21,11 +22,14 @@ const propTypes = {
   style: PropTypes.object,
   tooltip: PropTypes.func,
   width: PropTypes.number,
+  actions: PropTypes.object,
+  i18n: PropTypes.object,
+  downloadFileName: PropTypes.string
 };
 
 const defaultProps = {
   background: undefined,
-  className: '',
+  className: "",
   data: {},
   enableHover: true,
   height: undefined,
@@ -33,16 +37,24 @@ const defaultProps = {
   onNewView() {},
   onParseError() {},
   padding: undefined,
-  renderer: 'svg',
+  renderer: "svg",
   style: undefined,
   tooltip: () => {},
   width: undefined,
+  actions: {},
+  i18n: {},
+  downloadFileName: "可视化"
 };
 
 class Vega extends React.Component {
   static isSamePadding(a, b) {
     if (isDefined(a) && isDefined(b)) {
-      return a.top === b.top && a.left === b.left && a.right === b.right && a.bottom === b.bottom;
+      return (
+        a.top === b.top &&
+        a.left === b.left &&
+        a.right === b.right &&
+        a.bottom === b.bottom
+      );
     }
 
     return a === b;
@@ -75,7 +87,7 @@ class Vega extends React.Component {
       let changed = false;
 
       // update view properties
-      ['width', 'height', 'renderer', 'logLevel', 'background']
+      ["width", "height", "renderer", "logLevel", "background"]
         .filter(field => props[field] !== prevProps[field])
         .forEach(field => {
           this.view[field](props[field]);
@@ -99,14 +111,12 @@ class Vega extends React.Component {
         });
       }
 
-      if (props.enableHover !== prevProps.enableHover) {
+      if (!prevProps.enableHover && props.enableHover) {
+        this.view.hover();
         changed = true;
       }
 
       if (changed) {
-        if (props.enableHover) {
-          this.view.hover();
-        }
         this.view.run();
       }
     }
@@ -116,15 +126,16 @@ class Vega extends React.Component {
     this.clearView();
   }
 
-  createView(spec) {
+  async createView(spec) {
     if (spec) {
       const { props } = this;
       // Parse the vega spec and create the view
       try {
-        const runtime = vega.parse(spec);
-        const view = new vega.View(runtime).initialize(this.element);
-
-        // Attach listeners onto the signals
+        const { view } = await vegaEmbed(
+          this.element,
+          spec,
+          this.propsToEmbedOptions(props)
+        );
         if (spec.signals) {
           spec.signals.forEach(signal => {
             view.addSignalListener(signal.name, (...args) => {
@@ -139,21 +150,12 @@ class Vega extends React.Component {
         // store the vega.View object to be used on later updates
         this.view = view;
 
-        ['logLevel', 'renderer', 'tooltip', 'background', 'width', 'height', 'padding']
-          .filter(field => isDefined(props[field]))
-          .forEach(field => {
-            view[field](props[field]);
-          });
-
         if (spec.data && props.data) {
           spec.data
             .filter(d => props.data[d.name])
             .forEach(d => {
               this.updateData(d.name, props.data[d.name]);
             });
-        }
-        if (props.enableHover) {
-          view.hover();
         }
         view.run();
 
@@ -179,10 +181,27 @@ class Vega extends React.Component {
           vega
             .changeset()
             .remove(() => true)
-            .insert(value),
+            .insert(value)
         );
       }
     }
+  }
+
+  propsToEmbedOptions(props) {
+    return {
+      ...(props.enableHover ? { hover: props.enableHover } : {}),
+      ...(props.height ? { height: props.height } : {}),
+      ...(props.logLevel ? { logLevel: props.logLevel } : {}),
+      ...(props.padding ? { padding: props.padding } : {}),
+      ...(props.renderer ? { renderer: props.renderer } : {}),
+      ...(props.tooltip ? { tooltip: props.tooltip } : {}),
+      ...(props.width ? { width: props.width } : {}),
+      ...(props.actions ? { actions: props.actions } : {}),
+      ...(props.i18n ? { i18n: props.i18n } : {}),
+      ...(props.downloadFileName
+        ? { downloadFileName: props.downloadFileName }
+        : {})
+    };
   }
 
   clearView() {
