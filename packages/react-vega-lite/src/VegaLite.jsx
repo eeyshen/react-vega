@@ -14,7 +14,7 @@ const VegaLite = props => {
   try {
     parsedProps.spec = vl.compile(combinedSpec).spec;
   } catch (ex) {
-    console.log("编译错误：", ex);
+    console.log("ERROR in spec compiling: ", ex);
   }
 
   return rnd ? <Vega {...parsedProps} /> : <VegaEmbed {...parsedProps} />;
