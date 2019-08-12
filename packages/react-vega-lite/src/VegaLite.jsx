@@ -5,16 +5,18 @@ import Vega from "../../react-vega/src/Vega";
 
 const VegaLite = props => {
   const parsedProps = { ...props };
-  const { spec, data, rnd } = props;
-  const combinedSpec = { ...spec };
-  if (data) {
-    combinedSpec.data = data;
-    delete parsedProps.data;
-  }
-  try {
-    parsedProps.spec = vl.compile(combinedSpec).spec;
-  } catch (ex) {
-    console.log("ERROR in spec compiling: ", ex);
+  const { type, spec, data, rnd } = props;
+  if (type === "vega-lite") {
+    const combinedSpec = { ...spec };
+    if (data) {
+      combinedSpec.data = data;
+      delete parsedProps.data;
+    }
+    try {
+      parsedProps.spec = vl.compile(combinedSpec).spec;
+    } catch (ex) {
+      console.log("ERROR in spec compiling: ", ex);
+    }
   }
 
   return rnd ? <Vega {...parsedProps} /> : <VegaEmbed {...parsedProps} />;
