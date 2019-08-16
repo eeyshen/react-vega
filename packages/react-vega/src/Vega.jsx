@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/forbid-prop-types */
-import * as vega from 'vega';
+import * as vega from "vega";
 
-import PropTypes from 'prop-types';
-import React from 'react';
-import { capitalize, isDefined, isFunction } from './util';
+import PropTypes from "prop-types";
+import React from "react";
+import { capitalize, isDefined, isFunction } from "./util";
 
 const propTypes = {
   background: PropTypes.string,
@@ -20,12 +20,12 @@ const propTypes = {
   spec: PropTypes.object.isRequired,
   style: PropTypes.object,
   tooltip: PropTypes.func,
-  width: PropTypes.number,
+  width: PropTypes.number
 };
 
 const defaultProps = {
   background: undefined,
-  className: '',
+  className: "",
   data: {},
   enableHover: true,
   height: undefined,
@@ -33,16 +33,21 @@ const defaultProps = {
   onNewView() {},
   onParseError() {},
   padding: undefined,
-  renderer: 'svg',
+  renderer: "svg",
   style: undefined,
   tooltip: () => {},
-  width: undefined,
+  width: undefined
 };
 
 class Vega extends React.Component {
   static isSamePadding(a, b) {
     if (isDefined(a) && isDefined(b)) {
-      return a.top === b.top && a.left === b.left && a.right === b.right && a.bottom === b.bottom;
+      return (
+        a.top === b.top &&
+        a.left === b.left &&
+        a.right === b.right &&
+        a.bottom === b.bottom
+      );
     }
 
     return a === b;
@@ -75,7 +80,7 @@ class Vega extends React.Component {
       let changed = false;
 
       // update view properties
-      ['width', 'height', 'renderer', 'logLevel', 'background']
+      ["width", "height", "renderer", "logLevel", "background"]
         .filter(field => props[field] !== prevProps[field])
         .forEach(field => {
           this.view[field](props[field]);
@@ -139,12 +144,19 @@ class Vega extends React.Component {
         // store the vega.View object to be used on later updates
         this.view = view;
 
-        ['logLevel', 'renderer', 'tooltip', 'background', 'width', 'height', 'padding']
+        [
+          "logLevel",
+          "renderer",
+          "tooltip",
+          "background",
+          "width",
+          "height",
+          "padding"
+        ]
           .filter(field => isDefined(props[field]))
           .forEach(field => {
             view[field](props[field]);
           });
-
         if (spec.data && props.data) {
           spec.data
             .filter(d => props.data[d.name])
@@ -179,7 +191,7 @@ class Vega extends React.Component {
           vega
             .changeset()
             .remove(() => true)
-            .insert(value),
+            .insert(value)
         );
       }
     }
