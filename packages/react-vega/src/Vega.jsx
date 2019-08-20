@@ -167,7 +167,8 @@ class Vega extends React.Component {
         if (props.enableHover) {
           view.hover();
         }
-        view.run();
+        // view.run();
+        view.runAsync();
 
         props.onNewView(view);
       } catch (ex) {
