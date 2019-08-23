@@ -200,7 +200,8 @@ class Vega extends React.Component {
       ...(props.i18n ? { i18n: props.i18n } : {}),
       ...(props.downloadFileName
         ? { downloadFileName: props.downloadFileName }
-        : {})
+        : {}),
+      ...(props.theme ? { theme: props.theme } : {})
     };
   }
 

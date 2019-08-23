@@ -19,7 +19,8 @@ const VegaLite = props => {
     }
   }
 
-  return rnd ? <Vega {...parsedProps} /> : <VegaEmbed {...parsedProps} />;
+  // return rnd ? <Vega {...parsedProps} /> : <VegaEmbed {...parsedProps} />;
+  return <VegaEmbed {...parsedProps} />;
 };
 
 VegaLite.propTypes = Vega.propTypes;
