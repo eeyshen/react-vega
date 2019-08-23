@@ -5,7 +5,7 @@ import Vega from "../../react-vega/src/Vega";
 
 const VegaLite = props => {
   const parsedProps = { ...props };
-  const { type, spec, data, rnd } = props;
+  const { type, spec, data } = props;
   if (type === "vega-lite") {
     const combinedSpec = { ...spec };
     if (data) {
