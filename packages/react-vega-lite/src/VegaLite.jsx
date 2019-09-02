@@ -21,6 +21,7 @@ const VegaLite = props => {
   }
 
   // return rnd ? <Vega {...parsedProps} /> : <VegaEmbed {...parsedProps} />;
+  console.log("spec inner", spec);
   return <VegaEmbed {...parsedProps} />;
 };
 
